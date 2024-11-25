@@ -23,5 +23,6 @@
   },
   "[typescriptreact]": {
     "editor.formatOnSave": false
-  }
+  },
+  "twind-intellisense.presets": ["tailwind"]
 }

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
+import { ThemeProvider } from 'next-themes'
+import TwindProvider from "./twind-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,10 +27,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <SessionProvider>
-          {children}
+          <ThemeProvider attribute="class">
+            <TwindProvider>
+              {children}
+            </TwindProvider>
+          </ThemeProvider>
         </SessionProvider>
       </body>
     </html>

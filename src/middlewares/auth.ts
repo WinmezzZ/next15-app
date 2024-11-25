@@ -1,8 +1,4 @@
-import { auth } from '@/auth'
-
-export function middleware(req: any, res: any) {
-  return auth(req, res)
-}
+export { auth as middleware } from '@/auth'
 
 // // this middleware will be used to protect routes that require authentication
 // export default auth({
@@ -22,3 +18,8 @@ export function middleware(req: any, res: any) {
 //   });
 
 export const config = { matcher: ["/admin/:path*"] };
+
+// // Read more: https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
+// export const config = {
+//     matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+//   }
