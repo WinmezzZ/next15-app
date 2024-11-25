@@ -1,30 +1,25 @@
-import prisma from "@/lib/prisma";
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import Resend from "next-auth/providers/resend";
+import prisma from '@/lib/prisma';
+import NextAuth from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { PrismaAdapter } from '@auth/prisma-adapter';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
 
   providers: [
-    Resend({
-      apiKey: process.env.RESEND_API_KEY,
-      from: 'YOUR EMAIL FROM (eg: team@resend.com)',
-    }),
     CredentialsProvider({
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
-      authorize: async (credentials) => {
+      authorize: async credentials => {
         const { email, password } = credentials;
         // const hashedPassword = await agron.hash(password as string);
-        const user = await prisma.user.findFirst({ 
-          where: { 
+        const user = await prisma.user.findFirst({
+          where: {
             email: email as string,
             password: password as string,
-          }
+          },
         });
         return user;
       },
@@ -39,7 +34,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       const dbUser = await prisma.user.findFirst({
         where: {
           email: token.email,
-        }
+        },
       });
 
       if (!dbUser) {
@@ -71,10 +66,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
 
-    
     authorized: async ({ auth }) => {
       // Logged in users are authenticated, otherwise redirect to login page
-      return !!auth
+      return !!auth;
     },
   },
 
@@ -82,13 +76,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
 
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
+
+  trustHost: true,
 });
 
-
-declare module "next-auth" {
+declare module 'next-auth' {
   interface Session {
-    accessToken?: string
+    accessToken?: string;
   }
 }

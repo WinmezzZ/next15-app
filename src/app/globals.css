@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind variants;
+@tailwind utilities;
+
 :root {
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
@@ -51,10 +55,18 @@
   --chart-4: 280 65% 60%;
   --chart-5: 340 75% 55%;
 }
-* {
-  box-sizing: border-box;
-}
+
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 2rem;
+  padding-left: 2rem
 }

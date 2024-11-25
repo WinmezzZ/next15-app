@@ -1,10 +1,9 @@
-import { revalidatePath } from "next/cache";
-import { verifyVerificationCode } from "@/actions/auth";
-import prisma from "@/lib/prisma";
-import { signIn, signOut } from '@/auth'
+import { revalidatePath } from 'next/cache';
+import { verifyVerificationCode } from '@/actions/auth';
+import prisma from '@/lib/prisma';
+import { signIn } from '@/auth';
 
-
-export const POST = async (req: Request, response: Response) => {
+export const POST = async (req: Request) => {
   const body = await req.json();
 
   try {
@@ -20,18 +19,15 @@ export const POST = async (req: Request, response: Response) => {
     });
 
     if (!user) {
-      return new Response("User not found", {
+      return new Response('User not found', {
         status: 400,
       });
     }
 
-    const isValid = await verifyVerificationCode(
-      { id: user.id, email: body.email },
-      body.code
-    );
+    const isValid = await verifyVerificationCode({ id: user.id, email: body.email }, body.code);
 
     if (!isValid) {
-      return new Response("Invalid OTP", {
+      return new Response('Invalid OTP', {
         status: 400,
       });
     }
@@ -47,15 +43,15 @@ export const POST = async (req: Request, response: Response) => {
       });
     }
     signIn('credentials', {
-        email: user.email,
-        redirect: false
-    })
-    revalidatePath("/", "layout");
+      email: user.email,
+      redirect: false,
+    });
+    revalidatePath('/', 'layout');
     return new Response(null, {
       status: 200,
     });
-  } catch (error) {
-    return new Response("Internal Server Error", {
+  } catch {
+    return new Response('Internal Server Error', {
       status: 500,
     });
   }

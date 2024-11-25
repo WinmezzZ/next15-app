@@ -15,7 +15,7 @@ export const sendOTP = async ({ toMail, code, userName }: SendWelcomeEmailProps)
   const temp = VerificationTemp({ userName, code });
 
   await resend.emails.send({
-    from: `ChadNext App <chadnext@moinulmoin.com>`,
+    from: `琉璃岛 <winme0308@gmail.com>`,
     to: toMail,
     subject: subject,
     headers: {

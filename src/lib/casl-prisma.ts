@@ -10,6 +10,7 @@ import { AbilityBuilder, hkt, PureAbility } from '@casl/ability';
 
 import type { Post, Prisma, PrismaClient, User } from '@prisma/client'
 import prisma from "./prisma";
+import { redirect } from "next/navigation";
 
 type ModelName = Prisma.ModelName;
 type ModelWhereInput = {
@@ -50,8 +51,11 @@ export type AppSubjects = 'all' | Subjects<{
 
 export type AppAbility = PureAbility<[string, AppSubjects], PrismaQuery>;
 
-export async function defineAbilitiesForUserId(userId: string): Promise<AppAbility> {
-  const { can, cannot, build } =new AbilityBuilder<AppAbility>(createPrismaAbility);
+export async function defineAbilitiesForUserId(userId: string | undefined): Promise<AppAbility> {
+  if (!userId) {
+    redirect('/login')
+  }
+  const { can, build } =new AbilityBuilder<AppAbility>(createPrismaAbility);
 
   // 从数据库中获取角色和权限
   const permissions = await prisma.permission.findMany({ where: { roles: { some: { users: { some: { id: userId } } } } } });

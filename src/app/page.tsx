@@ -1,21 +1,20 @@
-// import prisma from "@/lib/prisma";
-// import { defineAbilitiesForUserId } from "@/lib/casl-prisma";
-// import { signIn } from "@/auth";
-
-// const userId = 'cm3u5vle90000n4wpre5c7vkr'
+import prisma from "@/lib/prisma";
+import { defineAbilitiesForUserId } from "@/lib/casl-prisma";
+import { auth, signIn } from "@/auth";
 
 export default async function Home() {
-  // const ability = await defineAbilitiesForUserId(userId);
+  const session = await auth();
+  // const ability = await defineAbilitiesForUserId(session?.user?.id);
 
   // if (!ability.can("edit", "Post")) {
   //   console.log("You are not allowed to read posts");
   // }
 
-  // const posts = await prisma.post.findMany();
+  const posts = await prisma.post.findMany({ where: { authorId: session?.user?.id } });
 
   return (
-    <div className="w-2">
-      {/* <form
+    <div >
+      <form
           action={async () => {
             "use server"
             await signIn()
@@ -28,7 +27,7 @@ export default async function Home() {
           <h3>{post.title}</h3>
           <p>{post.content}</p>
         </div>
-      ))} */}
+      ))}
     </div>
   );
 }

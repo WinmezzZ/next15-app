@@ -1,38 +1,34 @@
-import { generateEmailVerificationCode } from "@/actions/auth";
-import { sendOTP } from "@/actions/email";
-import prisma from "@/lib/prisma";
+import { generateEmailVerificationCode } from '@/actions/auth';
+import { sendOTP } from '@/actions/email';
+import prisma from '@/lib/prisma';
 
 export const POST = async (req: Request) => {
   const body = await req.json();
 
-  try {
-    const user = await prisma.user.upsert({
-        where: {
-            email: body.email,
-          },
-        update: {},
-        create: {
-            email: body.email,
-            emailVerified: null,
-            password: body.password
-        },
-    });
+  const user = await prisma.user.upsert({
+    where: {
+      email: body.email,
+    },
+    update: {},
+    create: {
+      email: body.email,
+      emailVerified: null,
+      password: body.password,
+    },
+  });
 
-    const otp = await generateEmailVerificationCode(user.id, body.email);
-    await sendOTP({
-      toMail: body.email,
-      code: otp,
-      userName: user.name?.split(" ")[0] || "",
-    });
+  console.log('user', user);
 
-    return new Response(null, {
-      status: 200,
-    });
-  } catch (error) {
-    console.log(error);
+  const otp = await generateEmailVerificationCode(user.id, body.email);
 
-    return new Response(null, {
-      status: 500,
-    });
-  }
+  console.log('otp', otp);
+  await sendOTP({
+    toMail: body.email,
+    code: otp,
+    userName: user.name?.split(' ')[0] || '',
+  });
+
+  return new Response(null, {
+    status: 200,
+  });
 };
