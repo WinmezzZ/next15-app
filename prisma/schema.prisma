@@ -99,3 +99,12 @@ model Role {
   users       User[]
   permissions Permission[] @relation("RolePermissions")
 }
+
+
+model Category {
+  id    String @id @default(cuid())
+  name  String @unique
+  children Category[] @relation("CategoryChildren")
+  parent   Category? @relation("CategoryChildren", fields: [parentId], references: [id])
+  parentId String?
+}

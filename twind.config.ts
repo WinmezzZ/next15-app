@@ -56,8 +56,5 @@ export default defineConfig({
   		}
   	}
   },
-  rules: [
-    // ['size-', ({ $$ }) => `w-${$$} h-${$$}`],
-  ],
   preflight: false,
 })

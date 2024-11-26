@@ -10,6 +10,13 @@ export default function TwindProvider({
   children: React.ReactNode;
 }) {
   useEffect(() => {
+    window.addEventListener('warning', (event) => {
+      const ev = event as CustomEvent
+      if (ev.detail.code === "TWIND_INVALID_CLASS") {
+        ev.preventDefault();
+      }
+    });
+
     installTwind(twindConfig, process.env.NODE_ENV === 'production');
   }, []);
 
