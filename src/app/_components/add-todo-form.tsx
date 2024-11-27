@@ -38,10 +38,12 @@ export function AddTodoForm({ todos }: Props) {
   );
 
   return (
-    <form onSubmit={handleSubmitWithAction} className="flex flex-col space-y-4">
-      <Input {...form.register('newTodo')} />
+    <form onSubmit={handleSubmitWithAction} className="flex flex-col items-center gap-2 w-full">
+      <div className="flex items-center gap-2 w-full">
+        <Input {...form.register('newTodo')} />
+        <Button type="submit">Add Todo</Button>
+      </div>
       {form.formState.errors.newTodo ? <p>{form.formState.errors.newTodo.message}</p> : null}
-      <Button type="submit">Add Todo</Button>
       {form.formState.errors.root ? <p>{form.formState.errors.root.message}</p> : null}
     </form>
   );

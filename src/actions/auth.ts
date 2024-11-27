@@ -1,15 +1,11 @@
+'use server';
 
-"use server";
+import prisma from '@/lib/prisma';
+import { generateRandomString, RandomReader } from '@oslojs/crypto/random';
 
-import prisma from '@/lib/prisma'
-import { generateRandomString, RandomReader } from "@oslojs/crypto/random";
+const digits = '0123456789';
 
-const digits = "0123456789";
-
-export async function generateEmailVerificationCode(
-  userId: string,
-  email: string
-): Promise<string> {
+export async function generateEmailVerificationCode(userId: string, email: string): Promise<string> {
   await prisma.emailVerificationCode.deleteMany({
     where: {
       userId,
@@ -32,11 +28,8 @@ export async function generateEmailVerificationCode(
   return code;
 }
 
-export async function verifyVerificationCode(
-  user: { id: string; email: string },
-  code: string
-): Promise<boolean> {
-  return await prisma.$transaction(async (tx) => {
+export async function verifyVerificationCode(user: { id: string; email: string }, code: string): Promise<boolean> {
+  return await prisma.$transaction(async tx => {
     const databaseCode = await tx.emailVerificationCode.findFirst({
       where: {
         userId: user.id,

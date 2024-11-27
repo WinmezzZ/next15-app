@@ -27,7 +27,7 @@ export const addTodoAction = actionClient.schema(addTodoSchema).action(async ({ 
 });
 
 export const deleteTodoAction = actionClient.schema(deleteTodoSchema).action(async ({ parsedInput }) => {
-  await prisma.todo.delete({ where: { id: parsedInput.id } });
+  await prisma.todo.delete({ where: { id: parsedInput } });
   revalidatePath('/');
 });
 
