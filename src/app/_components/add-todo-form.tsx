@@ -5,12 +5,21 @@ import { addTodoSchema } from '../_actions/schema';
 import { addTodoAction } from '../_actions';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useForm } from 'react-hook-form';
+import { useForm, useFormState } from 'react-hook-form';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { useEffect } from 'react';
 
 const initialValues: z.infer<typeof addTodoSchema> = {
   newTodo: '',
+};
+
+const initialState = {
+  errors: {
+    firstName: undefined,
+    lastName: undefined,
+  },
+  message: undefined,
 };
 
 export function AddTodoForm() {
@@ -18,6 +27,18 @@ export function AddTodoForm() {
     resolver: zodResolver(addTodoSchema),
     defaultValues: initialValues,
   });
+
+  const [state, formAction] = useFormState(addTodoAction, initialState);
+
+  useEffect(() => {
+    console.log(state?.errors);
+    if (Array.isArray(state?.errors)) {
+      // Check if state.errors is an array before iterating
+      state.errors.forEach(error => {
+        form.setError(error.field, { message: error.message });
+      });
+    }
+  }, [state?.errors]);
 
   return (
     <Form {...form}>
