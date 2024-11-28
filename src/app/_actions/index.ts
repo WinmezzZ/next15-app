@@ -1,37 +1,47 @@
 'use server';
 
-import { actionClient } from '@/lib/safe-action';
-import { addTodoSchema, deleteTodoSchema, toggleTodoSchema } from './schema';
+import { addTodoSchema, toggleTodoSchema } from './schema';
 import prisma from '@/lib/prisma';
-import { returnValidationErrors } from 'next-safe-action';
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
-export const addTodoAction = actionClient.schema(addTodoSchema).action(async ({ parsedInput }) => {
-  const existingTodo = await prisma.todo.findFirst({ where: { title: parsedInput.newTodo } });
+export const addTodoAction = async (data: z.infer<typeof addTodoSchema>) => {
+  const validatedFields = addTodoSchema.safeParse(data);
 
-  if (existingTodo) {
-    returnValidationErrors(addTodoSchema, {
-      newTodo: {
-        _errors: ['The todo already exists!'],
-      },
-    });
+  if (!validatedFields.success) {
+    const fieldErrors = validatedFields.error.flatten().fieldErrors;
+    return {
+      error: Object.values(fieldErrors)[0][0],
+    };
   }
 
-  await prisma.todo.create({ data: { title: parsedInput.newTodo } });
+  const existingTodo = await prisma.todo.findFirst({ where: { title: data.newTodo } });
+
+  if (existingTodo) {
+    return {
+      error: 'The todo already exists!',
+    };
+  }
+
+  await prisma.todo.create({
+    data: {
+      title: data.newTodo,
+    },
+  });
   revalidatePath('/');
 
   return {
     success: true,
-    newTodo: parsedInput.newTodo,
+    newTodo: data.newTodo,
   };
-});
+};
 
-export const deleteTodoAction = actionClient.schema(deleteTodoSchema).action(async ({ parsedInput }) => {
-  await prisma.todo.delete({ where: { id: parsedInput } });
+export const deleteTodoAction = async (id: string) => {
+  await prisma.todo.delete({ where: { id } });
   revalidatePath('/');
-});
+};
 
-export const toggleTodoAction = actionClient.schema(toggleTodoSchema).action(async ({ parsedInput }) => {
-  await prisma.todo.update({ where: { id: parsedInput.id }, data: { completed: parsedInput.completed } });
+export const toggleTodoAction = async (data: z.infer<typeof toggleTodoSchema>) => {
+  await prisma.todo.update({ where: { id: data.id }, data: { completed: data.completed } });
   revalidatePath('/');
-});
+};

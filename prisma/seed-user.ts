@@ -1,5 +1,5 @@
-import prisma from "@/lib/prisma"
-import { Prisma } from "@prisma/client"
+import prisma from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 const userData: Prisma.UserCreateInput[] = [
   {
@@ -8,8 +8,8 @@ const userData: Prisma.UserCreateInput[] = [
     password: '123456',
     role: {
       connect: {
-        name: "USER"
-      }
+        name: 'USER',
+      },
     },
     posts: {
       create: [
@@ -20,15 +20,15 @@ const userData: Prisma.UserCreateInput[] = [
         },
       ],
     },
-  },  
+  },
   {
     name: 'Nilu',
     email: 'nilu@prisma.io',
     password: '123456',
     role: {
       connect: {
-        name: "OWNER"
-      }
+        name: 'OWNER',
+      },
     },
     posts: {
       create: [
@@ -46,8 +46,8 @@ const userData: Prisma.UserCreateInput[] = [
     password: '123456',
     role: {
       connect: {
-        name: "ADMIN"
-      }
+        name: 'ADMIN',
+      },
     },
     posts: {
       create: [
@@ -63,24 +63,24 @@ const userData: Prisma.UserCreateInput[] = [
       ],
     },
   },
-]
+];
 
 export async function main() {
   try {
-    console.log(`Start seeding ...`)
+    console.log(`Start seeding ...`);
     for (const u of userData) {
       const user = await prisma.user.create({
         data: u,
-      })
-      console.log(`Created user with id: ${user.id}`)
+      });
+      console.log(`Created user with id: ${user.id}`);
     }
-    console.log(`Seeding finished.`)
+    console.log(`Seeding finished.`);
   } catch (err) {
-    console.error(err)
-    process.exit(1)
+    console.error(err);
+    process.exit(1);
   } finally {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   }
 }
 
-main()
+main();

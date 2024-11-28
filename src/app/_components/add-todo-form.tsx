@@ -1,50 +1,42 @@
 'use client';
 
-import { useHookFormOptimisticAction } from '@next-safe-action/adapter-react-hook-form/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addTodoSchema } from '../_actions/schema';
 import { addTodoAction } from '../_actions';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Todo } from '@prisma/client';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
-type Props = {
-  todos: Todo[];
+const initialValues: z.infer<typeof addTodoSchema> = {
+  newTodo: '',
 };
 
-export function AddTodoForm({ todos }: Props) {
-  const { form, handleSubmitWithAction, resetFormAndAction } = useHookFormOptimisticAction(
-    addTodoAction,
-    zodResolver(addTodoSchema),
-    {
-      actionProps: {
-        currentState: {
-          todos,
-        },
-        onSuccess: () => {
-          resetFormAndAction();
-        },
-        updateFn: (state, input) => {
-          return {
-            todos: [...state.todos, { id: '1', title: input.newTodo, completed: false }],
-          };
-        },
-      },
-      formProps: {
-        mode: 'onChange',
-      },
-      errorMapProps: {},
-    },
-  );
+export function AddTodoForm() {
+  const form = useForm<z.infer<typeof addTodoSchema>>({
+    resolver: zodResolver(addTodoSchema),
+    defaultValues: initialValues,
+  });
 
   return (
-    <form onSubmit={handleSubmitWithAction} className="flex flex-col items-center gap-2 w-full">
-      <div className="flex items-center gap-2 w-full">
-        <Input {...form.register('newTodo')} />
-        <Button type="submit">Add Todo</Button>
-      </div>
-      {form.formState.errors.newTodo ? <p>{form.formState.errors.newTodo.message}</p> : null}
-      {form.formState.errors.root ? <p>{form.formState.errors.root.message}</p> : null}
-    </form>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(addTodoAction)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="newTodo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>First Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage>{form.formState.errors.newTodo?.message}</FormMessage>
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Add</Button>
+      </form>
+    </Form>
   );
 }
