@@ -10,3 +10,5 @@ export const toggleTodoSchema = z.object({
   id: z.string(),
   completed: z.boolean(),
 });
+
+export type ToggleTodoSchema = z.infer<typeof toggleTodoSchema>;

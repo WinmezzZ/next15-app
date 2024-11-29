@@ -1,6 +1,6 @@
 'use server';
 
-import { addTodoSchema, toggleTodoSchema } from './schema';
+import { addTodoSchema, ToggleTodoSchema, toggleTodoSchema } from './schema';
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
@@ -43,5 +43,4 @@ export const deleteTodoAction = async (id: string) => {
 
 export const toggleTodoAction = async (data: z.infer<typeof toggleTodoSchema>) => {
   await prisma.todo.update({ where: { id: data.id }, data: { completed: data.completed } });
-  revalidatePath('/');
 };
