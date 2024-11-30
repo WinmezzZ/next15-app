@@ -5,16 +5,16 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader } from 'lucide-react';
 
-import { signIn } from 'next-auth/react';
 import { oauthProviders } from '../config';
+import { useTransition } from 'react';
+import { signIn } from '@/auth';
 
 export function OAuthSignIn() {
-  const [loading, setLoading] = React.useState(false);
-
+  const [isPending, startTransition] = useTransition();
   const handleSignIn = async (provider: string) => {
-    setLoading(true);
-    await signIn(provider);
-    setLoading(false);
+    startTransition(async () => {
+      await signIn(provider);
+    });
   };
 
   return (
@@ -26,12 +26,12 @@ export function OAuthSignIn() {
             variant="outline"
             className="w-full bg-background"
             onClick={() => handleSignIn(provider.name)}
-            disabled={loading}
+            disabled={isPending}
           >
-            {loading && <Loader className="mr-2 size-4 animate-spin" aria-hidden="true" />}
+            {isPending && <Loader className="mr-2 size-4 animate-spin" aria-hidden="true" />}
             {provider.icon}
             {provider.name}
-            <span className="sr-only">{provider.name}</span>
+            <span className="sr-only">{provider.title}</span>
           </Button>
         );
       })}

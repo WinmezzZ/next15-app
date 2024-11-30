@@ -3,8 +3,8 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from './theme-provider';
-import { ThemeToggle } from '@/components/theme-toggle';
 import { META_THEME_COLORS } from '@/config/site';
+import { Toaster } from '@/components/ui/toaster';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -48,6 +48,7 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <SessionProvider>
+          <Toaster />
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -55,9 +56,6 @@ export default function RootLayout({
             enableColorScheme
             disableTransitionOnChange
           >
-            <header className="flex justify-end p-4 h-10">
-              <ThemeToggle />
-            </header>
             {children}
           </ThemeProvider>
         </SessionProvider>

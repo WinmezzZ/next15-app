@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Loader2 } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 const initialValues: z.infer<typeof addTodoSchema> = {
   newTodo: '',
@@ -20,11 +21,19 @@ export function AddTodoForm() {
     defaultValues: initialValues,
   });
 
-  const { control, formState } = form;
+  const { control, formState, handleSubmit } = form;
+
+  const onSubmit = async (values: z.infer<typeof addTodoSchema>) => {
+    const result = await addTodoAction(values);
+    console.log(result);
+    if (result.error) {
+      toast({ variant: 'destructive', title: result.error });
+    }
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(addTodoAction)} className="flex gap-2">
+      <form className="flex gap-2" onSubmit={handleSubmit(onSubmit)}>
         <FormField
           control={control}
           name="newTodo"

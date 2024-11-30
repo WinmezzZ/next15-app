@@ -1,6 +1,6 @@
 'use server';
 
-import { addTodoSchema, ToggleTodoSchema, toggleTodoSchema } from './schema';
+import { addTodoSchema, toggleTodoSchema } from './schema';
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';

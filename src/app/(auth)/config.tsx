@@ -2,7 +2,8 @@ import { ReactNode } from 'react';
 
 export const oauthProviders = [
   {
-    name: 'Google',
+    name: 'google',
+    title: '谷歌登录',
     icon: (
       <svg
         className="mr-2 size-4"
@@ -38,7 +39,8 @@ export const oauthProviders = [
     ),
   },
   {
-    name: 'Github',
+    name: 'github',
+    title: 'github登录',
     icon: (
       <svg
         className="mr-2 size-4"
@@ -72,4 +74,5 @@ export const oauthProviders = [
 ] satisfies {
   name: string;
   icon: ReactNode;
+  title: string;
 }[];
