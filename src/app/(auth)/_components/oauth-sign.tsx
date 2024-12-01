@@ -8,12 +8,13 @@ import { Loader } from 'lucide-react';
 import { oauthProviders } from '../config';
 import { useTransition } from 'react';
 import { signIn } from '@/auth';
+import { oauthSignIn } from '../action';
 
 export function OAuthSignIn() {
   const [isPending, startTransition] = useTransition();
   const handleSignIn = async (provider: string) => {
     startTransition(async () => {
-      await signIn(provider);
+      await oauthSignIn(provider);
     });
   };
 

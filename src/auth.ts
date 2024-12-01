@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import NextAuth, { AuthError } from 'next-auth';
+import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
@@ -17,20 +17,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const validatedFields = signInSchema.safeParse(credentials);
 
         if (!validatedFields.success) {
-          const fieldErrors = validatedFields.error.flatten().fieldErrors;
+          // const fieldErrors = validatedFields.error.flatten().fieldErrors;
 
-          throw new AuthError(Object.values(fieldErrors)[0][0]);
+          // throw new AuthError(Object.values(fieldErrors)[0][0]);
+          return null;
         }
 
-        const { username, password } = validatedFields.data;
-        const user = await prisma.user.findFirstOrThrow({
+        const { email, password } = validatedFields.data;
+        const user = await prisma.user.findUnique({
           where: {
-            name: username as string,
-            password: password as string,
+            email: email,
+            password: password,
           },
         });
         if (!user) {
-          throw new AuthError('请检查用户名或密码');
+          // throw new AuthError('请检查用户名或密码');
+          return null;
         }
         return user;
       },
@@ -54,23 +56,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return {
         id: dbUser.id,
         name: dbUser.name,
-        role: dbUser.roleId,
+        // role: dbUser.roleId,
         email: dbUser.email,
         picture: dbUser.image,
       };
     },
 
     // session is the session object that we get from the jwt callback, we can get session data client side using useSession hook
-    async session({ session, user }) {
-      // if (token) {
-      //   session.user.id = token.id;
-      //   session.user.name = token.name;
-      //   session.user.email = token.email;
-      //   session.user.picture = token.picture;
-      //   session.user.role = token.role;
-      // }
-      session.user = user;
-      return session;
+    async session({ session, token }: any) {
+      if (token) {
+        session.user.id = token.id;
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.picture = token.picture;
+        // session.user.role = token.role;
+        return session;
+      }
     },
 
     authorized: async ({ auth }) => {

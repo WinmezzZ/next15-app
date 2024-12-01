@@ -11,21 +11,21 @@ datasource db {
 }
 
 model Post {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   title     String
   content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
+  published Boolean  @default(false)
+  author    User?    @relation(fields: [authorId], references: [id])
   authorId  String?
   createdAt DateTime @default(now())
 }
 
 model Category {
-  id   String @id @default(cuid())
-  name String
+  id       String  @id @default(cuid())
+  name     String
   parentId String?
 
-  parent   Category? @relation("CategoryParent", fields: [parentId], references: [id])
+  parent   Category?  @relation("CategoryParent", fields: [parentId], references: [id])
   children Category[] @relation("CategoryParent")
 }
 
@@ -33,10 +33,9 @@ model User {
   id       String  @id @default(cuid())
   email    String  @unique
   name     String?
-  password String
+  password String?
   posts    Post[]
-  role     Role    @relation(fields: [roleId], references: [id])
-  roleId   Int     @default(1)
+  roles    Role[]  @relation("UserRoles")
 
   emailVerified          DateTime?
   image                  String?
@@ -73,7 +72,8 @@ model Account {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [id], references: [id], onDelete: Cascade)
+  user   User?   @relation(fields: [id], references: [id], onDelete: Cascade)
+  userId String?
 
   @@id([provider, providerAccountId])
 }
@@ -106,12 +106,12 @@ model VerificationToken {
 model Role {
   id          Int          @id @default(autoincrement())
   name        String       @unique
-  users       User[]
+  users       User[]       @relation("UserRoles")
   permissions Permission[] @relation("RolePermissions")
 }
 
 model Todo {
-  id        String @id @default(cuid())
+  id        String  @id @default(cuid())
   title     String
   completed Boolean @default(false)
 }
