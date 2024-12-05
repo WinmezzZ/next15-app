@@ -5,6 +5,10 @@ import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+export const getTodosAction = async () => {
+  return await prisma.todo.findMany();
+};
+
 export const addTodoAction = async (data: z.infer<typeof addTodoSchema>) => {
   const validatedFields = addTodoSchema.safeParse(data);
 
@@ -23,16 +27,15 @@ export const addTodoAction = async (data: z.infer<typeof addTodoSchema>) => {
     };
   }
 
-  await prisma.todo.create({
+  const newTodo = await prisma.todo.create({
     data: {
       title: data.newTodo,
     },
   });
-  revalidatePath('/');
 
   return {
     success: true,
-    newTodo: data.newTodo,
+    newTodo,
   };
 };
 

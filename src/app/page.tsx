@@ -1,22 +1,12 @@
 import prisma from '@/lib/prisma';
-import { AddTodoForm } from './_components/add-todo-form';
-import { TodoItem } from './_components/todo-item';
+import { TodoList } from './_components/todo-list';
 
 export default async function Home() {
-  const todos = await prisma.todo.findMany({
-    orderBy: {
-      completed: 'asc',
-    },
-  });
+  const todos = await prisma.todo.findMany();
 
   return (
     <div className="p-4 flex flex-col gap-2 items-center w-[400px] mx-auto">
-      <AddTodoForm />
-      <ul className="w-full space-y-2 mt-4">
-        {todos.map(todo => (
-          <TodoItem key={todo.id} todo={todo} />
-        ))}
-      </ul>
+      <TodoList todos={todos} />
     </div>
   );
 }

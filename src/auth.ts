@@ -41,25 +41,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
   callbacks: {
     async jwt({ token, user }) {
-      if (!token.email) return token;
-      const dbUser = await prisma.user.findFirst({
-        where: {
-          email: token.email,
-        },
-      });
+      console.log('jwt', token);
+      console.log('user', user);
+      if (user) {
+        const dbUser = await prisma.user.findUnique({
+          where: {
+            email: user.email || '',
+          },
+        });
 
-      if (!dbUser) {
-        token.id = user!.id;
-        return token;
+        if (!dbUser) {
+          const res = await prisma.user.create({
+            data: { name: user.name!, email: user.email!, image: user.image! },
+          });
+          token.id = res.id;
+          return token;
+        }
+
+        token.id = dbUser.id;
+        token.name = dbUser.name;
+        token.email = dbUser.email;
+        token.picture = dbUser.image;
       }
 
-      return {
-        id: dbUser.id,
-        name: dbUser.name,
-        // role: dbUser.roleId,
-        email: dbUser.email,
-        picture: dbUser.image,
-      };
+      return token;
     },
 
     // session is the session object that we get from the jwt callback, we can get session data client side using useSession hook
@@ -68,10 +73,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.id;
         session.user.name = token.name;
         session.user.email = token.email;
-        session.user.picture = token.picture;
+        session.user.image = token.picture;
         // session.user.role = token.role;
-        return session;
       }
+      return session;
     },
 
     authorized: async ({ auth }) => {
@@ -86,7 +91,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
     strategy: 'jwt',
   },
-
   trustHost: true,
 
   pages: {
