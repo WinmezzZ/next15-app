@@ -15,6 +15,7 @@ import { Github, Loader } from 'lucide-react';
 import Image from 'next/image';
 import { Card, CardTitle, CardDescription, CardHeader, CardFooter, CardContent } from '@/components/ui/card';
 import { OAuthSignIn } from '../_components/oauth-sign';
+import { useRouter } from 'next/navigation';
 
 const userAuthSchema = z.object({
   email: z.string().email('Please enter a valid email address.'),
@@ -27,6 +28,7 @@ export default function AuthForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [isGithubLoading, setIsGithubLoading] = useState(false);
+  const router = useRouter();
   const [isVerifying, setIsVerifying] = useState(false);
   const [otp, setOTP] = useState('');
   const [countdown, setCountdown] = useState(30);
@@ -91,7 +93,7 @@ export default function AuthForm() {
     setIsVerifying(true);
 
     try {
-      const res = await fetch('/api/auth/login/verify-otp', {
+      const res = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: data.email, code: otp }),
@@ -103,9 +105,9 @@ export default function AuthForm() {
       setCountdown(0);
       reset();
       toast({
-        title: 'Successfully verified!',
+        title: '验证成功',
       });
-      window.location.href = '/dashboard';
+      router.push('/');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Something went wrong';
       toast({
@@ -126,8 +128,8 @@ export default function AuthForm() {
   }
 
   return (
-    <section className="grid items-center gap-8 pb-8 pt-6 lg:py-6 container !max-w-xl py-8 md:py-10">
-      <Card>
+    <section className="grid items-center gap-8 w-[400px]">
+      <Card className="px-8">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl">Sign up</CardTitle>
           <CardDescription>Choose your preferred sign up method</CardDescription>
@@ -145,7 +147,6 @@ export default function AuthForm() {
                       <Input
                         id="email"
                         placeholder="name@example.com"
-                        type="email"
                         disabled={isLoading || isGithubLoading}
                         {...register('email')}
                       />
@@ -179,8 +180,8 @@ export default function AuthForm() {
             {currentStep === 2 && (
               <>
                 <p className="mb-4 text-center">
-                  <span className="break-all">We&apos;ve sent a 6-digit code to {getValues('email')}.</span> Please
-                  enter it below for verification.
+                  <span className="break-all">我们给 {getValues('email')} 发了一个6位数的验证码.</span>{' '}
+                  请在下面输入框输入进行验证.
                 </p>
                 <form onSubmit={handleSubmit(onOTPSubmit)} className="flex flex-col gap-2.5">
                   <div>
@@ -210,16 +211,16 @@ export default function AuthForm() {
                   </div>
                   <Button type="submit" disabled={isVerifying || otp.length !== 6} className="mt-4">
                     {isVerifying && <Loader className="mr-2 h-4 w-4 animate-spin" />}
-                    Verify OTP
+                    验证邮箱
                   </Button>
                 </form>
                 <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
-                  <span>Didn&apos;t receive the code/expired?</span>
+                  <span>没有收到验证码或已过期?</span>
                   {countdown > 0 ? (
-                    <span>Resend in {countdown}s</span>
+                    <span>{countdown}秒后重新发送</span>
                   ) : (
                     <Button variant="link" onClick={handleResend} className="h-auto p-0" disabled={isLoading}>
-                      {isLoading ? 'Resending...' : 'Resend'}
+                      {isLoading ? '重发中...' : '重新发送'}
                     </Button>
                   )}
                 </div>
@@ -232,7 +233,7 @@ export default function AuthForm() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-background px-2 text-muted-foreground">其他登录方式</span>
             </div>
           </div>
 
@@ -244,7 +245,7 @@ export default function AuthForm() {
             Already have an account?{' '}
             <Link
               aria-label="Sign in"
-              href="/signin"
+              href="/sign-in"
               className="text-primary underline-offset-4 transition-colors hover:underline"
             >
               Sign in

@@ -2,6 +2,7 @@
 
 import { addTodoSchema, toggleTodoSchema } from './schema';
 import prisma from '@/lib/prisma';
+import { actionClient } from '@/lib/safe-action';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -9,20 +10,12 @@ export const getTodosAction = async () => {
   return await prisma.todo.findMany();
 };
 
-export const addTodoAction = async (data: z.infer<typeof addTodoSchema>) => {
-  const validatedFields = addTodoSchema.safeParse(data);
-
-  if (!validatedFields.success) {
-    const fieldErrors = validatedFields.error.flatten().fieldErrors;
-    return {
-      error: Object.values(fieldErrors)[0][0],
-    };
-  }
-
+export const addTodoAction = actionClient.schema(addTodoSchema).action(async ({ parsedInput: data }) => {
   const existingTodo = await prisma.todo.findFirst({ where: { title: data.newTodo } });
 
   if (existingTodo) {
     return {
+      success: false,
       error: 'The todo already exists!',
     };
   }
@@ -37,7 +30,7 @@ export const addTodoAction = async (data: z.infer<typeof addTodoSchema>) => {
     success: true,
     newTodo,
   };
-};
+});
 
 export const deleteTodoAction = async (id: string) => {
   await prisma.todo.delete({ where: { id } });

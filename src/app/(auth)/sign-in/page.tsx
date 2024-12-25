@@ -8,12 +8,12 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Loader } from 'lucide-react';
-import { signIn } from 'next-auth/react';
 import { Card, CardTitle, CardDescription, CardHeader, CardFooter, CardContent } from '@/components/ui/card';
 import { OAuthSignIn } from '../_components/oauth-sign';
 import { useRouter } from 'next/navigation';
 import { signInSchema } from '../schema';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { signIn } from '../action';
 
 export default function SignIn() {
   const router = useRouter();
@@ -22,26 +22,33 @@ export default function SignIn() {
   });
 
   async function onEmailSubmit(data: z.infer<typeof signInSchema>) {
-    const res = await signIn('credentials', { redirect: false, ...data });
-    if (!res?.code) {
-      toast({
-        title: '登录失败',
-        description: '请检查用户名和密码',
-        variant: 'destructive',
-      });
-    } else {
-      toast({
-        title: '登录成功',
-      });
-      router.push('/');
-    }
+    const res = await signIn(data);
+    console.log(res);
+    fetch('/api/auth/send-login', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: data.email,
+      }),
+    });
+    // if (!res?.) {
+    //   toast({
+    //     title: '登录失败',
+    //     description: '请检查用户名和密码',
+    //     variant: 'destructive',
+    //   });
+    // } else {
+    //   toast({
+    //     title: '登录成功',
+    //   });
+    //   router.push('/');
+    // }
   }
 
   const isLoading = form.formState.isSubmitting;
 
   return (
-    <section className="grid items-center gap-8 pb-8 pt-6 lg:py-6 container !max-w-xl py-8 md:py-10">
-      <Card>
+    <section className="grid items-center gap-8 w-[400px]">
+      <Card className="px-8">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl">登录</CardTitle>
           <CardDescription>选择一种登录方式</CardDescription>
@@ -51,14 +58,14 @@ export default function SignIn() {
             <form onSubmit={form.handleSubmit(onEmailSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="username"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>用户名</FormLabel>
+                    <FormLabel>邮箱</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
-                    <FormMessage>{form.formState.errors.username?.message}</FormMessage>
+                    <FormMessage>{form.formState.errors.email?.message}</FormMessage>
                   </FormItem>
                 )}
               />
@@ -99,7 +106,7 @@ export default function SignIn() {
             没有账号？{' '}
             <Link
               aria-label="Sign in"
-              href="/signin"
+              href="/sign-up"
               className="text-primary underline-offset-4 transition-colors hover:underline"
             >
               去注册

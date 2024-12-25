@@ -17,18 +17,17 @@ export const POST = async (req: Request) => {
     },
   });
 
-  console.log('user', user);
-
   const otp = await generateEmailVerificationCode(user.id, body.email);
 
-  console.log('otp', otp);
-  await sendOTP({
+  const res = await sendOTP({
     toMail: body.email,
     code: otp,
     userName: user.name?.split(' ')[0] || '',
   });
 
-  return new Response(null, {
+  console.log('res', res);
+
+  return new Response(JSON.stringify({ ok: true }), {
     status: 200,
   });
 };

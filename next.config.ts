@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  serverExternalPackages: ['lib-qqwry', 'public-ip'],
 };
 
 export default nextConfig;

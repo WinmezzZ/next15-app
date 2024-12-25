@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
-import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from './theme-provider';
 import { META_THEME_COLORS } from '@/config/site';
 import { Toaster } from '@/components/ui/toaster';
@@ -47,18 +46,10 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <SessionProvider>
-          <Toaster />
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            enableColorScheme
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-        </SessionProvider>
+        <Toaster />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem enableColorScheme disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

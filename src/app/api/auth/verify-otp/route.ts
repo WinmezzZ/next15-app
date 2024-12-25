@@ -1,7 +1,6 @@
 import { revalidatePath } from 'next/cache';
 import { verifyVerificationCode } from '@/actions/auth';
 import prisma from '@/lib/prisma';
-import { signIn } from '@/auth';
 
 export const POST = async (req: Request) => {
   const body = await req.json();
@@ -19,7 +18,7 @@ export const POST = async (req: Request) => {
     });
 
     if (!user) {
-      return new Response('User not found', {
+      return new Response('用户不存在', {
         status: 400,
       });
     }
@@ -27,7 +26,7 @@ export const POST = async (req: Request) => {
     const isValid = await verifyVerificationCode({ id: user.id, email: body.email }, body.code);
 
     if (!isValid) {
-      return new Response('Invalid OTP', {
+      return new Response('无效验证码或已过期', {
         status: 400,
       });
     }
@@ -42,16 +41,12 @@ export const POST = async (req: Request) => {
         },
       });
     }
-    signIn('credentials', {
-      email: user.email,
-      redirect: false,
-    });
     revalidatePath('/', 'layout');
     return new Response(null, {
       status: 200,
     });
   } catch {
-    return new Response('Internal Server Error', {
+    return new Response('服务器错误', {
       status: 500,
     });
   }
