@@ -131,8 +131,8 @@ export default function AuthForm() {
     <section className="grid items-center gap-8 w-[400px]">
       <Card className="px-8">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl">Sign up</CardTitle>
-          <CardDescription>Choose your preferred sign up method</CardDescription>
+          <CardTitle className="text-2xl">注册</CardTitle>
+          {currentStep === 2 && <CardDescription>邮箱验证</CardDescription>}
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className={cn('mt-4 flex max-w-full flex-col gap-4')}>
@@ -242,13 +242,13 @@ export default function AuthForm() {
 
         <CardFooter>
           <div className="text-sm text-muted-foreground">
-            Already have an account?{' '}
+            已有账号？{' '}
             <Link
               aria-label="Sign in"
               href="/sign-in"
               className="text-primary underline-offset-4 transition-colors hover:underline"
             >
-              Sign in
+              去登录
             </Link>
           </div>
         </CardFooter>
