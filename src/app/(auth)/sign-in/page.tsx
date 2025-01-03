@@ -48,7 +48,7 @@ export default function SignIn() {
 
   return (
     <section className="grid items-center gap-8 w-[400px]">
-      <Card className="px-8">
+      <Card className="px-8 bg-transparent">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl">登录</CardTitle>
           <CardDescription>选择一种登录方式</CardDescription>

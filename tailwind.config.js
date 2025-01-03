@@ -3,13 +3,6 @@ module.exports = {
   darkMode: ['class'],
   content: ['src/app/**/*.{ts,tsx}', 'src/components/**/*.{ts,tsx}'],
   theme: {
-    container: {
-      center: 'true',
-      padding: '2rem',
-      screens: {
-        '2xl': '1400px',
-      },
-    },
     extend: {
       borderRadius: {
         xl: 'calc(var(--radius) + 4px)',
@@ -71,8 +64,12 @@ module.exports = {
       },
       keyframes: {
         'caret-blink': {
-          '0%,70%,100%': { opacity: '1' },
-          '20%,50%': { opacity: '0' },
+          '0%,70%,100%': {
+            opacity: '1',
+          },
+          '20%,50%': {
+            opacity: '0',
+          },
         },
       },
       animation: {

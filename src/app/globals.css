@@ -2,7 +2,6 @@
 @tailwind variants;
 @tailwind utilities;
 
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -83,12 +82,12 @@
   html {
     @apply scroll-smooth;
   }
-  
+
   body {
     @apply bg-background text-foreground;
   }
-   /* Custom scrollbar styling. Thanks @pranathiperii. */
-   ::-webkit-scrollbar {
+  /* Custom scrollbar styling. Thanks @pranathiperii. */
+  ::-webkit-scrollbar {
     width: 5px;
   }
   ::-webkit-scrollbar-track {
@@ -102,12 +101,4 @@
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--border)) transparent;
   }
-}
-
-.container {
-  width: 100%;
-  margin-right: auto;
-  margin-left: auto;
-  padding-right: 2rem;
-  padding-left: 2rem;
 }
