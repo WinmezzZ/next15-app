@@ -1,19 +1,19 @@
 import type { Metadata, Viewport } from 'next';
-import localFont from 'next/font/local';
+import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from './theme-provider';
 import { META_THEME_COLORS } from '@/config/site';
 import { Toaster } from '@/components/ui/toaster';
+import { TailwindIndicator } from '@/components/tailwind-indicator';
 
-const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
+const geistSans = Geist({
   variable: '--font-geist-sans',
-  weight: '100 900',
+  subsets: ['latin'],
 });
-const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
+
+const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
-  weight: '100 900',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
@@ -36,18 +36,19 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              try {
-                if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
-                }
-              } catch (_) {}
-            `,
+            try {
+              if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
+              }
+            } catch (_) {}
+          `,
           }}
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Toaster />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem enableColorScheme disableTransitionOnChange>
+          <Toaster />
+          <TailwindIndicator />
           {children}
         </ThemeProvider>
       </body>

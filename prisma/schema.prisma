@@ -10,42 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  String?
-  createdAt DateTime @default(now())
-}
 
-model Category {
-  id       String  @id @default(cuid())
-  name     String
-  parentId String?
-
-  parent   Category?  @relation("CategoryParent", fields: [parentId], references: [id])
-  children Category[] @relation("CategoryParent")
-}
-
-model User {
-  id       String  @id @default(cuid())
-  email    String  @unique
-  name     String?
-  password String?
-  posts    Post[]
-  roles    Role[]  @relation("UserRoles")
-
-  emailVerified          DateTime?
-  image                  String?
-  accounts               Account[]
-  sessions               Session[]
-  emailVerificationCodes EmailVerificationCode[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
 
 model EmailVerificationCode {
   id        String   @id @default(cuid())
@@ -113,4 +78,66 @@ model Todo {
   id        String  @id @default(cuid())
   title     String
   completed Boolean @default(false)
+}
+
+model Space {
+  id        String  @id @default(cuid())
+  ownerId   String
+  owner     User    @relation(fields: [ownerId], references: [id])
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  articles     Article[]
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ArticleType {
+  HOME
+  POST
+  PAGE
+}
+
+model Article {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  String?
+  createdAt DateTime @default(now())
+  spaceId   String
+  space     Space    @relation(fields: [spaceId], references: [id])
+}
+
+model Category {
+  id       String  @id @default(cuid())
+  name     String
+  parentId String?
+
+  parent   Category?  @relation("CategoryParent", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryParent")
+}
+
+model User {
+  id       String  @id @default(cuid())
+  email    String  @unique
+  name     String?
+  password String?
+  articles Article[]
+  roles    Role[]  @relation("UserRoles")
+
+  emailVerified          DateTime?
+  image                  String?
+  accounts               Account[]
+  sessions               Session[]
+  emailVerificationCodes EmailVerificationCode[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  spaces    Space[]
 }

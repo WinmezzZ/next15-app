@@ -228,6 +228,9 @@ const Sidebar = React.forwardRef<
       isDraggingRail,
     } = useSidebar();
 
+    console.log('isMobile', isMobile)
+    console.log('collapsible', collapsible)
+
     if (collapsible === "none") {
       return (
         <div
@@ -263,7 +266,7 @@ const Sidebar = React.forwardRef<
         </Sheet>
       );
     }
-
+console.log('233')
     return (
       <div
         ref={ref}
