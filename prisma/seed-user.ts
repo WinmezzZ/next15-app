@@ -11,15 +11,6 @@ const userData: Prisma.UserCreateInput[] = [
         name: 'USER',
       },
     },
-    posts: {
-      create: [
-        {
-          title: 'Join the Prisma Discord',
-          content: 'https://pris.ly/discord',
-          published: true,
-        },
-      ],
-    },
   },
   {
     name: 'Nilu',

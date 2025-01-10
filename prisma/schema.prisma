@@ -74,12 +74,6 @@ model Role {
   permissions Permission[] @relation("RolePermissions")
 }
 
-model Todo {
-  id        String  @id @default(cuid())
-  title     String
-  completed Boolean @default(false)
-}
-
 model Space {
   id        String  @id @default(cuid())
   ownerId   String
@@ -88,6 +82,7 @@ model Space {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   articles     Article[]
+  users    User[] @relation("UserSpaces")
 }
 
 enum ArticleStatus {
@@ -139,5 +134,6 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  spaces    Space[]
+  spaces    Space[] @relation("UserSpaces")
+  ownedSpaces Space[]
 }
